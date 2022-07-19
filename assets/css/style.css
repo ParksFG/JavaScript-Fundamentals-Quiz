@@ -59,3 +59,9 @@ li:hover {
     background-color: #E0B0FF;
     color: black;
 }
+
+#recordItem {
+    cursor: default;
+    background-color: gold;
+    color: black;
+}

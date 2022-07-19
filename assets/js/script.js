@@ -2,6 +2,7 @@ var startBtn = document.getElementById('startBtn');
 var startQuiz = document.getElementById('startQuiz');
 var timeLeft = document.getElementById('headerTimer');
 var titleEl = document.getElementById('titles');
+var highScoreBtn = document.getElementById('headerHighSc')
 var startInsEl = document.getElementById('startIns');
 var centerEl = document.querySelector('main')
 var score = 0;
@@ -37,6 +38,7 @@ var questions = [
 
 var secondsLeft = 76;
 var wrongSub = 10;
+var gameDone = false
 
 
 startBtn.addEventListener("click", function() {
@@ -47,14 +49,14 @@ startBtn.addEventListener("click", function() {
         if(secondsLeft === 0) {
             timeLeft.textContent = "Time's up!"
             clearInterval(timerInterval)
-            // go to highscore screen
+        }else if(gameDone === true) {
+            timeLeft.textContent = "Time's up!"
+            clearInterval(timerInterval)
         }
 
     }, 1000);
     startQuizFunction();
     nextQuestion();
-    startIns.setAttribute('style', 'display: none');
-    startBtn.setAttribute('style', 'display: none');
 })
 
 var createQuestionName = document.createElement('h2');
@@ -64,6 +66,7 @@ var li2 = document.createElement("li");
 var li3 = document.createElement("li");
 var li4 = document.createElement("li");
 var questionResult = document.createElement("p")
+var qLength = questions.length
 
 // qN = Question Number
 var qN = 0;
@@ -80,9 +83,14 @@ function nextQuestion() {
     li3.textContent = questionChoice3;
     li4.textContent = questionChoice4;
     return qN;
-}
+};
 
 function startQuizFunction() {
+    secondsLeft = 76
+    gameDone = false
+    qN = 0
+    startInsEl.setAttribute('style', 'display: none');
+    startBtn.setAttribute('style', 'display: none');
     startQuiz.appendChild(createQuestions);
     createQuestions.appendChild(li1);
     createQuestions.appendChild(li2);
@@ -90,80 +98,118 @@ function startQuizFunction() {
     createQuestions.appendChild(li4);
     startQuiz.appendChild(questionResult);
     questionResult.textContent = " ";
+};
+
+document.addEventListener("click", function(event) {
+    if(event.target.matches('li')){
+        if(event.target.textContent === questions[qN].correct) {
+            if(qN < 4) {
+                qN++;
+                nextQuestion();
+                questionResult.textContent = "That's Correct!";
+            }else {
+                finish()
+            };
+        }else if(event.target.textContent !== questions[qN].correct) {
+            if(qN < 4) {
+                qN++;
+                nextQuestion();
+                questionResult.textContent = "That's Wrong! :(";
+                secondsLeft = secondsLeft - wrongSub;
+            }else {
+                finish()
+            };
+
+        }}
+});
+
+var submission = document.createElement("form");
+var label = document.createElement("label");
+var input = document.createElement("input");
+var submit = document.createElement("input")
+
+
+function finish() {
+    gameDone = true
+    startQuiz.removeChild(createQuestions);
+    titleEl.textContent = "End of quiz!";
+    score = secondsLeft;
+    questionResult.textContent = "You scored a " + score + "/75!";
+    startQuiz.appendChild(submission);
+    submission.appendChild(label);
+    submission.appendChild(input);
+    submission.appendChild(submit);
+    input.setAttribute('id', 'initialsInput')
+    submit.setAttribute('type', 'submit');
+    submit.setAttribute('value', 'Submit HighScore!');
+    submit.setAttribute('id', 'submitScore');
+    label.textContent = "Enter your initials!";
+    var initialsInput = document.getElementById('initialsInput')
+    submit.addEventListener("click", function(event) {
+        event.preventDefault();
+        var initials = initialsInput.value;
+
+        if(initials === "") {
+            window.confirm("Please enter initials.")
+        } else {
+            var record = {
+                initials: initials,
+                score: score
+            }
+            var records = localStorage.getItem("records");
+            if(records === null) {
+                records = [];
+            } else {
+                records = JSON.parse(records);
+            }
+            records.push(record);
+            var quizScore = JSON.stringify(records);
+            localStorage.setItem("records", quizScore);
+            startQuiz.removeChild(submission);
+            startQuiz.removeChild(questionResult);
+            startInsEl.setAttribute('style', 'display: default');
+            startBtn.setAttribute('style', 'display: default');
+            titleEl.textContent = "Coding Quiz Challenge";
+        }
+    }
+
+)
+    
 }
 
-if(qN === 0) {
-    li3.addEventListener("click", function choice() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Correct!";
-        this.removeEventListener("click", choice);
+highScoreBtn.addEventListener("click", function() {
+    if(titleEl.textContent !== "Hiscores:") {
+        recordHighScores();
+        var backBtn = document.createElement("button");
+        startQuiz.appendChild(backBtn);
+    };
+    titleEl.textContent = "Hiscores:";
+    startInsEl.setAttribute('style', 'display: none');
+    startBtn.setAttribute('style', 'display: none');
+    backBtn.textContent = "Go Back"
+    backBtn.setAttribute('id', 'backBtn');
+    backBtn.addEventListener('click', function() {
+        var lists = document.getElementById("HighScoreList");
+        startQuiz.removeChild(lists)
+        titleEl.textContent = "Coding Quiz Challenge";
+        startInsEl.setAttribute('style', 'display: default');
+        startBtn.setAttribute('style', 'display: default');
+        startQuiz.removeChild(backBtn);
     })
-    li1.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li2.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li4.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-}else if(qN === 1) {
-    li3.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Correct!";
-    })
-    li1.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li2.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li4.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-}else if(qN === 2) {
-    li4.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Correct!";
-    })
-    li1.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li2.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-    li3.addEventListener("click", function() {
-        qN++;
-        nextQuestion();
-        questionResult.textContent = "That's Wrong! :(";
-        secondsLeft = secondsLeft - wrongSub;
-    })
-
+    }
+    
+)
+// Records the high
+function recordHighScores() {
+    var recordsLength = JSON.parse(localStorage.getItem('records')).length;
+    var fullRecords = JSON.parse(localStorage.getItem('records'))
+    var HighScoreList = document.createElement("ul");
+    startQuiz.appendChild(HighScoreList);
+    for(var i = 0; i < recordsLength; i++ ) {
+        var recordItem = document.createElement('li');
+        recordItem.setAttribute('id', 'recordItem')
+        HighScoreList.setAttribute('id', 'HighScoreList')
+        HighScoreList.appendChild(recordItem);
+        recordItem.textContent = fullRecords[i].initials + "'s score: " + fullRecords[i].score;
+    }
 }
