@@ -1,3 +1,4 @@
+// Grabbing most needed elements
 var startBtn = document.getElementById('startBtn');
 var startQuiz = document.getElementById('startQuiz');
 var timeLeft = document.getElementById('headerTimer');
@@ -36,11 +37,14 @@ var questions = [
     }
 ];
 
+// Timer time left
 var secondsLeft = 76;
+// Penalty of 10 for getting a question wrong
 var wrongSub = 10;
+// Used for some checks to prevent issues
 var gameDone = false
 
-
+// Timer Start
 startBtn.addEventListener("click", function() {
     var timerInterval = setInterval(function() {
         secondsLeft--;
@@ -49,6 +53,7 @@ startBtn.addEventListener("click", function() {
         if(secondsLeft === 0) {
             timeLeft.textContent = "Time's up!"
             clearInterval(timerInterval)
+        // Check so timer doesn't start looping on itself
         }else if(gameDone === true) {
             timeLeft.textContent = "Time's up!"
             clearInterval(timerInterval)
@@ -59,6 +64,7 @@ startBtn.addEventListener("click", function() {
     nextQuestion();
 })
 
+// Quiz choices generation variables
 var createQuestionName = document.createElement('h2');
 var createQuestions = document.createElement('ul');
 var li1 = document.createElement("li");
@@ -71,6 +77,7 @@ var qLength = questions.length
 // qN = Question Number
 var qN = 0;
 
+// Dynamic changing of quiz title and choices
 function nextQuestion() {
     var questionTitle = questions[qN].question;
     var questionChoice1 = questions[qN].choices[0];
@@ -85,6 +92,7 @@ function nextQuestion() {
     return qN;
 };
 
+// Inital start function, resetting some starting values to avoid bugs
 function startQuizFunction() {
     secondsLeft = 76
     gameDone = false
@@ -100,6 +108,7 @@ function startQuizFunction() {
     questionResult.textContent = " ";
 };
 
+// Best solution without overcomplicating code for answer validation
 document.addEventListener("click", function(event) {
     if(event.target.matches('li')){
         if(event.target.textContent === questions[qN].correct) {
@@ -123,12 +132,13 @@ document.addEventListener("click", function(event) {
         }}
 });
 
+// Submitting your score variables
 var submission = document.createElement("form");
 var label = document.createElement("label");
 var input = document.createElement("input");
 var submit = document.createElement("input")
 
-
+// Layout management mainly with record validation
 function finish() {
     gameDone = true
     startQuiz.removeChild(createQuestions);
@@ -148,7 +158,7 @@ function finish() {
     submit.addEventListener("click", function(event) {
         event.preventDefault();
         var initials = initialsInput.value;
-
+        // Prevents leaving it blank
         if(initials === "") {
             window.confirm("Please enter initials.")
         } else {
@@ -176,8 +186,9 @@ function finish() {
 )
     
 }
-
+// Clicking the highscores button at the top of the page
 highScoreBtn.addEventListener("click", function() {
+    // Prevents making unlimited copies of the scores
     if(titleEl.textContent !== "Hiscores:") {
         recordHighScores();
         var backBtn = document.createElement("button");
@@ -188,6 +199,7 @@ highScoreBtn.addEventListener("click", function() {
     startBtn.setAttribute('style', 'display: none');
     backBtn.textContent = "Go Back"
     backBtn.setAttribute('id', 'backBtn');
+    // Back button functionality to keep it all on the same page
     backBtn.addEventListener('click', function() {
         var lists = document.getElementById("HighScoreList");
         startQuiz.removeChild(lists)
@@ -199,12 +211,13 @@ highScoreBtn.addEventListener("click", function() {
     }
     
 )
-// Records the high
+// Records the highscores.
 function recordHighScores() {
     var recordsLength = JSON.parse(localStorage.getItem('records')).length;
     var fullRecords = JSON.parse(localStorage.getItem('records'))
     var HighScoreList = document.createElement("ul");
     startQuiz.appendChild(HighScoreList);
+    // For loop to make the new scores register on the list.
     for(var i = 0; i < recordsLength; i++ ) {
         var recordItem = document.createElement('li');
         recordItem.setAttribute('id', 'recordItem')
