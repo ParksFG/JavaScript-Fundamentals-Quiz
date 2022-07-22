@@ -4,11 +4,6 @@
 
 I made this project to focus on my skills with javascript and web APIs.  I didn't feel too comfortable with more advanced javascript nor writing out web APIs.  This project was really difficult to start with, but I ended up finding a groove a bit later in the project.  I was finding myself easily recollecting what I needed, however the biggest thing this project taught me was the important of psuedo-code.  Hopefully I remember to update this project so I have a nice litte reference quiz for the JavaScript fundamentals.  Maybe more advanced quizzes in the future?
 
-- What was your motivation?
-- Why did you build this project? (Note: the answer is not "Because it was a homework assignment.")
-- What problem does it solve?
-- What did you learn?
-
 ## Table of Contents
 
   - [Description](#description)
